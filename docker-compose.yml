@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
   ganhatempo:
-    image: galantadev/ganhatempo:latest
+    image: galantadev/ganhatempo:latest  # Certifique-se que esta imagem já tem o nginx.conf corrigido
+    container_name: ganhatempo-app
     restart: always
     networks:
       - web
