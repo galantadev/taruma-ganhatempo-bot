@@ -2,11 +2,13 @@ version: "3.8"
 
 services:
   ganhatempo:
-    image: galantadev/ganhatempo:latest  # Certifique-se que esta imagem já tem o nginx.conf corrigido
-    container_name: ganhatempo-app
-    restart: always
+    image: galantadev/ganhatempo:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     networks:
-      - web
+      - ganhatempo_net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.galanta.com.br`)"
@@ -15,5 +17,5 @@ services:
       - "traefik.http.services.ganhatempo.loadbalancer.server.port=80"
 
 networks:
-  web:
+  ganhatempo_net:
     external: true
