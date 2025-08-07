@@ -6,7 +6,7 @@ services:
       context: .
     restart: always
     ports:
-      - "5173:80" # Altere para "80:80" em produção se necessário
+      - "5173:80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.seudominio.com.br`)"
@@ -18,5 +18,4 @@ services:
 
 networks:
   web:
-    name: web
     external: true
