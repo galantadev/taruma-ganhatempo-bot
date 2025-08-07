@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  ganhatempo-bot:
+    build: .
+    container_name: ganhatempo-bot
+    restart: always
+    ports:
+      - "5173:80" # ou mude para 80:80 em produção
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.seudominio.com.br`)"
+      - "traefik.http.routers.ganhatempo.entrypoints=websecure"
+      - "traefik.http.routers.ganhatempo.tls.certresolver=myresolver"
+      - "traefik.http.services.ganhatempo.loadbalancer.server.port=80"
+
+networks:
+  web:
+    external: true
