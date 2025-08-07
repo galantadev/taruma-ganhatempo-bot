@@ -5,14 +5,14 @@ services:
     image: galantadev/ganhatempo:latest
     restart: always
     networks:
-      - network_public
+      - web
     labels:
       - "traefik.enable=true"
-      - 'traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.galanta.com.br`)'
+      - "traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.galanta.com.br`)"
       - "traefik.http.routers.ganhatempo.entrypoints=websecure"
       - "traefik.http.routers.ganhatempo.tls.certresolver=myresolver"
       - "traefik.http.services.ganhatempo.loadbalancer.server.port=80"
 
 networks:
-  network_public:
+  web:
     external: true
