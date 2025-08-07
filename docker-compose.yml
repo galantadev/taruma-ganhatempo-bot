@@ -3,7 +3,6 @@ version: "3.8"
 services:
   ganhatempo:
     image: galantadev/ganhatempo:latest
-    container_name: ganhatempo_app
     restart: always
     networks:
       - network_public
