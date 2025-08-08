@@ -122,7 +122,7 @@ export const ChatInterface = () => {
 
 
   return (
-    <div className="flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden bg-background md:h-screen md:max-h-none md:overflow-visible">
+    <div className="flex flex-col h-[100dvh] max-h-[80dvh] overflow-hidden bg-background md:h-screen md:max-h-none md:overflow-visible">
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-primary text-primary-foreground shadow-md">
         <div className="flex items-center gap-3">
