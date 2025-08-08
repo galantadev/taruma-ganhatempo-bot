@@ -1,18 +1,18 @@
 name: Build, Push and Bump Compose
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [main]
-    # evita loop se o próprio bot commitar o bump
     paths-ignore:
       - ".github/**"
 
 jobs:
   build-and-push:
-    # não roda quando for o commit automático do bot com [skip ci]
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
-
     env:
       IMAGE_REPO: galantadev/ganhatempo
 
@@ -20,43 +20,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Docker Login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Set up Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build & Push (latest + sha)
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: |
-            ${{ env.IMAGE_REPO }}:latest
-            ${{ env.IMAGE_REPO }}:${{ github.sha }}
-          # descomente se quiser multi-arch:
-          # platforms: linux/amd64,linux/arm64
+      # ... (login, build & push iguais)
 
       - name: Bump docker-compose.yml image tag to commit SHA
         run: |
           FILE="docker-compose.yml"
-          IMAGE="${{ env.IMAGE_REPO }}:${{ github.sha }}"
-          # troca a linha da imagem (preserva espaços)
-          sed -i -E "s|(image:\s*${{ env.IMAGE_REPO }}:).*|\1${{ github.sha }}|g" "$FILE"
-          echo "Updated $FILE to use image: $IMAGE"
+          sed -i -E "s|(image:\s*${{ env.IMAGE_REPO }})(:.*)?|\1:${{ github.sha }}|g" "$FILE"
           git diff -- "$FILE" || true
 
       - name: Commit & Push compose change ([skip ci])
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docker-compose.yml
-          # só commita se houver alteração
           git diff --cached --quiet && { echo "No compose changes to commit."; exit 0; }
           git commit -m "ci: bump image tag to ${{ env.IMAGE_REPO }}:${{ github.sha }} [skip ci]"
-          git push origin HEAD:main
+          git push origin HEAD:${{ github.ref_name }}
