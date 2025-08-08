@@ -16,7 +16,7 @@ export const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Olá!  👋 Sou o assistente virtual do Ganha Tempo de Tarumã/SP. Como posso te ajudar hoje?',
+      text: 'Olá! 👋 Sou o assistente virtual do Ganha Tempo de Tarumã/SP. Como posso te ajudar hoje?',
       isBot: true,
       timestamp: new Date(),
     },
@@ -34,12 +34,25 @@ export const ChatInterface = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Manter foco no textarea
+  // Mantém foco no textarea ao receber mensagens
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    if (textareaRef.current) textareaRef.current.focus();
   }, [messages]);
+
+  // 🔒 Bloqueia scroll do <body> em telas mobile enquanto o chat estiver montado
+  useEffect(() => {
+    const isMobile =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(max-width: 767px)').matches;
+
+    if (isMobile) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -57,12 +70,9 @@ export const ChatInterface = () => {
     setIsTyping(true);
 
     try {
-      // Enviar mensagem para o webhook
       const response = await fetch('https://hook.baofeng.com.br/webhook/ganhatempo-taruma', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: messageText,
           messageType: 'conversation',
@@ -73,29 +83,21 @@ export const ChatInterface = () => {
 
       if (response.ok) {
         const data = await response.text();
-        
-        // Parse da resposta JSON e extrair apenas o conteúdo
+
         let responseText = 'Mensagem recebida com sucesso!';
         try {
           const jsonResponse = JSON.parse(data);
           let rawText = jsonResponse.messages || jsonResponse.output || jsonResponse.message || data;
-          
-          // Se for array, juntar com quebras de linha
-          if (Array.isArray(rawText)) {
-            rawText = rawText.join('\n');
-          }
-          
-          // Limpar formatação Markdown indesejada
-          responseText = rawText
-            .replace(/\*\*(.*?)\*\*/g, '$1') // Remove negrito
-            .replace(/\*(.*?)\*/g, '$1') // Remove itálico
-            .replace(/_{2,}(.*?)_{2,}/g, '$1') // Remove sublinhado
+          if (Array.isArray(rawText)) rawText = rawText.join('\n');
+          responseText = String(rawText)
+            .replace(/\*\*(.*?)\*\*/g, '$1')
+            .replace(/\*(.*?)\*/g, '$1')
+            .replace(/_{2,}(.*?)_{2,}/g, '$1')
             .trim();
         } catch {
           responseText = data;
         }
-        
-        // Exibir resposta do webhook
+
         const botResponse: Message = {
           id: (Date.now() + 1).toString(),
           text: responseText,
@@ -107,8 +109,7 @@ export const ChatInterface = () => {
       } else {
         throw new Error('Erro na comunicação');
       }
-    } catch (error) {
-      // Resposta de erro
+    } catch {
       const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
         text: 'Desculpe, estou com problemas de conexão. Tente novamente em alguns instantes.',
@@ -120,17 +121,15 @@ export const ChatInterface = () => {
     }
   };
 
-
   return (
-    <div className="flex flex-col h-[80dvh] max-h-[80dvh] overflow-hidden bg-background md:h-screen md:max-h-none md:overflow-visible">
-      {/* Header */}
+    // 📱 Mobile: usa 100dvh e bloqueia scroll da página; 🖥️ Desktop: mantém h-screen padrão
+    <div className="flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden bg-background md:h-screen md:max-h-none md:overflow-visible">
+      {/* Header fixo no topo */}
       <div className="flex items-center justify-between p-4 bg-primary text-primary-foreground shadow-md">
         <div className="flex items-center gap-3">
           <Avatar className="w-10 h-10">
             <AvatarImage src="/lovable-uploads/dc76459b-2ca9-4125-bf7f-fced7831231b.png" alt="Ganha Tempo Tarumã" />
-            <AvatarFallback className="bg-primary-foreground text-primary font-bold">
-              GT
-            </AvatarFallback>
+            <AvatarFallback className="bg-primary-foreground text-primary font-bold">GT</AvatarFallback>
           </Avatar>
           <div>
             <h1 className="font-semibold text-lg">Ganha Tempo</h1>
@@ -144,13 +143,10 @@ export const ChatInterface = () => {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* 📜 Mensagens — rolagem só aqui (não na página) */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4 pb-24">
         {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
-          >
+          <div key={message.id} className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}>
             <div
               className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                 message.isBot
@@ -160,16 +156,12 @@ export const ChatInterface = () => {
             >
               <p className="text-sm whitespace-pre-line">{message.text}</p>
               <span className="text-xs opacity-70 mt-1 block">
-                {message.timestamp.toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+                {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
           </div>
         ))}
-        
-        {/* Indicador de digitando */}
+
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-card text-card-foreground border border-border max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
@@ -182,12 +174,12 @@ export const ChatInterface = () => {
             </div>
           </div>
         )}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="p-4 border-t border-border bg-card">
+      {/* ⌨️ Input “colado” no rodapé no mobile */}
+      <div className="p-4 border-t border-border bg-card sticky bottom-0 md:static">
         <div className="flex items-end gap-2">
           <Textarea
             ref={textareaRef}
@@ -208,9 +200,7 @@ export const ChatInterface = () => {
               }
             }}
           />
-          
-          {/* Botão de envio de texto */}
-          <Button 
+          <Button
             onClick={handleSendMessage}
             size="icon"
             className="bg-primary hover:bg-primary/90"
