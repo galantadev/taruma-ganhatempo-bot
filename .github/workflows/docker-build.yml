@@ -6,13 +6,16 @@ permissions:
 on:
   push:
     branches: [main]
+    # evita loop se o próprio bot commitar o bump
     paths-ignore:
       - ".github/**"
 
 jobs:
   build-and-push:
+    # não roda quando for o commit automático do bot com [skip ci]
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
+
     env:
       IMAGE_REPO: galantadev/ganhatempo
 
@@ -20,12 +23,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ... (login, build & push iguais)
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Bump docker-compose.yml image tag to commit SHA
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build & Push (latest)
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_REPO }}:latest
+          # descomente se quiser multi-arch:
+          # platforms: linux/amd64,linux/arm64
+
+      - name: Set image tag to `latest` in docker-compose.yml
         run: |
           FILE="docker-compose.yml"
-          sed -i -E "s|(image:\s*${{ env.IMAGE_REPO }})(:.*)?|\1:${{ github.sha }}|g" "$FILE"
+          sed -i -E "s|(image:\s*${{ env.IMAGE_REPO }})(:.*)?|\1:latest|g" "$FILE"
           git diff -- "$FILE" || true
 
       - name: Commit & Push compose change ([skip ci])
@@ -34,5 +54,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docker-compose.yml
           git diff --cached --quiet && { echo "No compose changes to commit."; exit 0; }
-          git commit -m "ci: bump image tag to ${{ env.IMAGE_REPO }}:${{ github.sha }} [skip ci]"
+          git commit -m "ci: fix image tag to :latest [skip ci]"
           git push origin HEAD:${{ github.ref_name }}
