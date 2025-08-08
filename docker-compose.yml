@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   ganhatempo:
-    image: galantadev/ganhatempo:cd55bee26c66294f19bfb020254e42c58818c6e3
+    image: galantadev/ganhatempo:2baea103b565192d1c0c12f7eca1af4f89538daf
     deploy:
       replicas: 1
       restart_policy:
