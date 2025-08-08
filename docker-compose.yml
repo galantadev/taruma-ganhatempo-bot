@@ -2,14 +2,16 @@ version: "3.8"
 
 services:
   ganhatempo:
-    image: galantadev/ganhatempo:latest
-    container_name: ganhatempo_app
-    restart: always
+    image: galantedev/ganhatempo:latest
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     networks:
       - web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ganhatempo.rule=Host(\"ganhatempo.galanta.com.br\")"
+      - "traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.galanta.com.br`)"
       - "traefik.http.routers.ganhatempo.entrypoints=websecure"
       - "traefik.http.routers.ganhatempo.tls.certresolver=myresolver"
       - "traefik.http.services.ganhatempo.loadbalancer.server.port=80"
