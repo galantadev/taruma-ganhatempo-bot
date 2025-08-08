@@ -16,7 +16,7 @@ export const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Olá! 👋 Sou o assistente virtual do Ganha Tempo de Tarumã/SP. Como posso te ajudar hoje?',
+      text: 'Olá! 1 👋 Sou o assistente virtual do Ganha Tempo de Tarumã/SP. Como posso te ajudar hoje?',
       isBot: true,
       timestamp: new Date(),
     },
