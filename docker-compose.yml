@@ -2,16 +2,17 @@ version: "3.8"
 
 services:
   ganhatempo:
-    image: galantadev/ganhatempo:2baea103b565192d1c0c12f7eca1af4f89538daf
+    image: galantadev/ganhatempo:latest
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
     networks:
       - ganhatempo_net
+      - network_public
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=ganhatempo_net"
+      - "traefik.docker.network=network_public"
       - "traefik.http.routers.ganhatempo.rule=Host(`ganhatempo.galanta.com.br`)"
       - "traefik.http.routers.ganhatempo.entrypoints=websecure"
       - "traefik.http.routers.ganhatempo.tls.certresolver=myresolver"
@@ -19,4 +20,6 @@ services:
 
 networks:
   ganhatempo_net:
+    external: true
+  network_public:
     external: true
