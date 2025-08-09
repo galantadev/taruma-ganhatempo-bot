@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Previne rolagem no body e garante que a aplicação ocupe toda a tela */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
