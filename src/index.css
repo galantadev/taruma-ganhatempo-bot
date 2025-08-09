@@ -18,6 +18,8 @@ input, textarea, select {
   font-size: 16px !important;
   transform-origin: left top;
   -webkit-transform-origin: left top;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Previne zoom em qualquer elemento focável */
@@ -27,6 +29,20 @@ input:focus, textarea:focus, select:focus {
   -moz-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  -webkit-user-select: text;
+  user-select: text;
+  outline: none;
+}
+
+/* Força a prevenção de zoom em dispositivos móveis */
+@media screen and (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+    -webkit-text-size-adjust: none !important;
+    -moz-text-size-adjust: none !important;
+    -ms-text-size-adjust: none !important;
+    text-size-adjust: none !important;
+  }
 }
 
 #root {
