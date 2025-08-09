@@ -122,19 +122,19 @@ export const ChatInterface = () => {
 
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-screen bg-background overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 bg-primary text-primary-foreground shadow-md">
+      <div className="flex items-center justify-between p-3 sm:p-4 bg-primary text-primary-foreground shadow-md flex-shrink-0">
         <div className="flex items-center gap-3">
-          <Avatar className="w-10 h-10">
+          <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
             <AvatarImage src="/lovable-uploads/dc76459b-2ca9-4125-bf7f-fced7831231b.png" alt="Ganha Tempo Tarumã" />
-            <AvatarFallback className="bg-primary-foreground text-primary font-bold">
+            <AvatarFallback className="bg-primary-foreground text-primary font-bold text-xs sm:text-sm">
               GT
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="font-semibold text-lg">Ganha Tempo</h1>
-            <p className="text-sm opacity-90">Tarumã/SP • Online</p>
+            <h1 className="font-semibold text-base sm:text-lg">Ganha Tempo</h1>
+            <p className="text-xs sm:text-sm opacity-90">Tarumã/SP • Online</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -145,20 +145,20 @@ export const ChatInterface = () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
           >
             <div
-              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+              className={`max-w-[280px] sm:max-w-xs lg:max-w-md px-3 sm:px-4 py-2 rounded-lg ${
                 message.isBot
                   ? 'bg-card text-card-foreground border border-border'
                   : 'bg-primary text-primary-foreground'
               }`}
             >
-              <p className="text-sm whitespace-pre-line">{message.text}</p>
+              <p className="text-sm sm:text-sm whitespace-pre-line leading-relaxed">{message.text}</p>
               <span className="text-xs opacity-70 mt-1 block">
                 {message.timestamp.toLocaleTimeString('pt-BR', {
                   hour: '2-digit',
@@ -172,7 +172,7 @@ export const ChatInterface = () => {
         {/* Indicador de digitando */}
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-card text-card-foreground border border-border max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
+            <div className="bg-card text-card-foreground border border-border max-w-[280px] sm:max-w-xs lg:max-w-md px-3 sm:px-4 py-2 rounded-lg">
               <div className="flex items-center gap-1">
                 <Skeleton className="w-2 h-2 rounded-full" />
                 <Skeleton className="w-2 h-2 rounded-full" />
@@ -187,14 +187,15 @@ export const ChatInterface = () => {
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-border bg-card">
+      <div className="p-3 sm:p-4 border-t border-border bg-card flex-shrink-0">
         <div className="flex items-end gap-2">
           <Textarea
             ref={textareaRef}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Digite sua mensagem..."
-            className="flex-1 min-h-[40px] max-h-32 resize-none"
+            className="flex-1 min-h-[44px] max-h-28 sm:max-h-32 resize-none text-base"
+            style={{ fontSize: '16px' }}
             rows={1}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
