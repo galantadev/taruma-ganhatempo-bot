@@ -8,6 +8,25 @@ html, body {
   overflow: hidden;
   position: fixed;
   width: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Previne zoom automático em inputs no iOS e outros navegadores móveis */
+input, textarea, select {
+  font-size: 16px !important;
+  transform-origin: left top;
+  -webkit-transform-origin: left top;
+}
+
+/* Previne zoom em qualquer elemento focável */
+input:focus, textarea:focus, select:focus {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 #root {

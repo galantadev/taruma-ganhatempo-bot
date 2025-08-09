@@ -203,8 +203,13 @@ export const ChatInterface = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Digite sua mensagem..."
-            className="flex-1 min-h-[44px] max-h-28 sm:max-h-32 resize-none text-base"
-            style={{ fontSize: '16px' }}
+            className="flex-1 min-h-[44px] max-h-28 sm:max-h-32 resize-none"
+            style={{ 
+              fontSize: '16px',
+              WebkitTextSizeAdjust: '100%',
+              textSizeAdjust: '100%',
+              transformOrigin: 'left top'
+            }}
             rows={1}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
