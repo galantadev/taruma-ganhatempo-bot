@@ -122,18 +122,9 @@ export const ChatInterface = () => {
 
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-background overflow-hidden"
-         style={{ 
-           position: 'fixed',
-           top: 0,
-           left: 0,
-           right: 0,
-           bottom: 0,
-           height: '100dvh',
-           maxHeight: '100dvh'
-         }}>
+    <div className="flex flex-col h-screen w-screen bg-background overflow-hidden fixed inset-0">
       {/* Header */}
-      <div className="flex items-center justify-between p-3 sm:p-4 bg-primary text-primary-foreground shadow-md flex-shrink-0">
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-3 sm:p-4 bg-primary text-primary-foreground shadow-md flex-shrink-0">
         <div className="flex items-center gap-3">
           <Avatar className="w-8 h-8 sm:w-10 sm:h-10">
             <AvatarImage src="/lovable-uploads/dc76459b-2ca9-4125-bf7f-fced7831231b.png" alt="Ganha Tempo Tarumã" />
@@ -154,7 +145,8 @@ export const ChatInterface = () => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain" 
+           style={{ marginTop: '76px', marginBottom: '76px' }}>
         {messages.map((message) => (
           <div
             key={message.id}
@@ -196,7 +188,7 @@ export const ChatInterface = () => {
       </div>
 
       {/* Input */}
-      <div className="p-3 sm:p-4 border-t border-border bg-card flex-shrink-0">
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-3 sm:p-4 border-t border-border bg-card flex-shrink-0">
         <div className="flex items-end gap-2">
           <Textarea
             ref={textareaRef}
